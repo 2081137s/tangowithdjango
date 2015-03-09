@@ -1,6 +1,6 @@
 import json
 import urllib, urllib2
-from keys.py import BING_API_KEY
+from keys import BING_API_KEY
 
 def run_query(search_terms):
     # Specify the base
@@ -64,3 +64,6 @@ def run_query(search_terms):
 
     # Return the list of results to the calling function.
     return results
+
+if __name__ == '__main__':
+    main()
