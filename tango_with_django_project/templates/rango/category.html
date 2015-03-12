@@ -22,7 +22,7 @@
 						</li>
 				{% endfor %}
                 </ul>
-		
+
         {% else %}
                 <strong>No pages currently in category.</strong> </br>
                 {% endif %}
@@ -30,8 +30,8 @@
         {% if user.is_authenticated %}
                 <a href="/rango/category/{{category.slug}}/add_page/">Add a Page</a>
                 {% endif %}
-        {% else %}
-                 The specified category {{ category_name }} does not exist!
+    {% else %}
+            The specified category {{ category_name }} does not exist!
     {% endif %}
 
 						<form class="form-inline" id="user_form" method="post" action="{% url 'category'  category.slug %}">
@@ -58,6 +58,6 @@
 					</div>
 				{% endif %}
 			</div>
-			
-	
+
+
 {% endblock %}

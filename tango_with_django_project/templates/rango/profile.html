@@ -10,6 +10,8 @@
 	{% if userprofile %}
 		<p>Website: <a href="{{ userprofile.website }}">{{userprofile.website}}</a></p>
 		<img src="{{ userprofile.picture.url }}" /></br>
+	{% else %}
+	    <a href="{% url 'add_profile' %}">Edit profile</a>
 	{% endif %}
 	<br/>
 </div>

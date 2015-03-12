@@ -10,6 +10,7 @@ from rango.bing_search import run_query
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from django.template import RequestContext
+from django.shortcuts import redirect
 
 # Create your views here.
 
@@ -20,7 +21,7 @@ def encode_url(str):
 
 def decode_url(str):
     return str.replace('_', ' ')
-    
+
 def index(request):
 
     category_list = Category.objects.order_by('-likes')[:5]
@@ -72,7 +73,7 @@ def category(request, category_name_slug):
     context_dict['result_list'] = None
     context_dict['query'] = None
     if request.method == 'POST':
-        query = request.POST['query'].strip()
+        query = request.POST.get('query', False)
 
         if query:
             # Run our Bing function to get the results list!
@@ -87,11 +88,13 @@ def category(request, category_name_slug):
         pages = Page.objects.filter(category=category).order_by('-views')
         context_dict['pages'] = pages
         context_dict['category'] = category
+        if not context_dict['query']:
+            context_dict['query'] = category.name
+
     except Category.DoesNotExist:
         pass
 
-    if not context_dict['query']:
-        context_dict['query'] = category.name
+
 
     return render(request, 'rango/category.html', context_dict)
 
@@ -121,6 +124,9 @@ def add_category(request):
     return render(request, 'rango/add_category.html', {'form': form})
 
 def add_page(request, category_name_slug):
+    context_dict = {}
+    context_dict['form'] = None
+    context_dict['category'] = None
 
     try:
         cat = Category.objects.get(slug=category_name_slug)
@@ -142,7 +148,8 @@ def add_page(request, category_name_slug):
     else:
         form = PageForm()
 
-    context_dict = {'form':form, 'category': cat}
+    context_dict['form'] = form
+    context_dict['category'] = cat
 
     return render(request, 'rango/add_page.html', context_dict)
 
@@ -162,8 +169,6 @@ def search(request):
             result_list = run_query(query)
 
     return render(request, 'rango/search.html', {'result_list': result_list})
-
-from django.shortcuts import redirect
 
 def track_url(request):
     page_id = None
@@ -191,7 +196,7 @@ def profile(request):
         up = UserProfile.objects.get(user=u)
     except:
         up = None
-        
+
     context_dict['user'] = u
     context_dict['userprofile'] = up
     return render_to_response('rango/profile.html', context_dict, context)
